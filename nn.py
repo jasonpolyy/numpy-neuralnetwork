@@ -23,9 +23,10 @@ class MLP:
         self.layer_sizes = layer_sizes
         self.loss_function = loss_function
         self.tol = tol
-        self.epochs = 100
+        self.epochs = epochs
         self.weights = None
         self.input_layer_size = None
+        self.output_layer_size = None
         self.num_hidden_layers = self.__get_number_of_hidden_layers()
         self.losses = list()
         self.activation = activation
@@ -35,6 +36,7 @@ class MLP:
         Fit the neural network using some data X and y.
         """
         self.input_layer_size = X.shape[1]
+        self.output_layer_size = len(np.unique(y))
         self.__initialise_weights()
 
         # iterate through epochs to train
@@ -65,7 +67,9 @@ class MLP:
 
         outputs = np.array([])
         for x_i in X:
-            outputs = np.append(outputs, self.__feed_forward(x_i, self.activation))
+            pred = self.__feed_forward(x_i, self.activation)
+            pred_softmax = np.max(pred)
+            outputs = np.append(outputs, pred_softmax)
 
         return outputs
 
@@ -82,7 +86,8 @@ class MLP:
         Feed input forward through the neural network.
         """
         output = x_i
-        for layer_idx in range(self.num_hidden_layers):
+
+        for layer_idx in range(self.num_hidden_layers+1):
             output = activation(self.weights['w' + str(layer_idx)].T.dot(output) + self.weights['b' + str(layer_idx)])
 
         return output
@@ -92,7 +97,6 @@ class MLP:
         Randomly initialise the weights and biases for all layers in the network.
         """
         np.random.seed(seed)
-        input_layer_size = self.input_layer_size
 
         # set input layer sizes
         param_values = {'w0': np.random.rand(self.input_layer_size, self.layer_sizes[0]) * 0.1,
@@ -103,6 +107,10 @@ class MLP:
             param_values['w' + str(layer_i)] = np.random.randn(self.layer_sizes[layer_i_minus1],
                                                                self.layer_sizes[layer_i]) * 0.1
             param_values['b' + str(layer_i)] = np.random.randn(self.layer_sizes[layer_i]) * 0.1
+
+        param_values['w' + str(self.num_hidden_layers)] = np.random.randn(self.layer_sizes[self.num_hidden_layers-1],
+                                                                          self.output_layer_size) * 0.1
+        param_values['b' + str(self.num_hidden_layers)] = np.random.randn(self.output_layer_size) * 0.1
 
         self.weights = param_values
 

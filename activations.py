@@ -1,5 +1,9 @@
 import numpy as np
 
+"""
+Definitions for loss and activation functions that fit with the MLP class.
+"""
+
 
 # activation functions
 def relu(x):
