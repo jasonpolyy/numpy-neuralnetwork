@@ -14,17 +14,21 @@ def sigmoid(x):
     return np.exp(x) / (np.exp(x) + 1)
 
 
-def softmax(x_i, x):
-    return np.exp(x_i) / np.sum(np.exp(x))
+def softmax(x):
+    """
+    Calculate the softmax values of a vector `x`
+
+    Softmax is defined as the exponential of a vector divided by the sum of the exponentials of a vector.
+    :param x: vector to transform using softmax
+    :return: vector transformed using the softmax function
+    """
+    e = np.exp(x)
+    return e / np.sum(e)
 
 
 # loss functions
 def cross_entropy(x):
     return -np.log(x)
-
-
-def cross_entropy_mult(x_i, x):
-    return -np.log(softmax(x_i, x))
 
 
 def mse(y_pred, y_actuals):

@@ -10,7 +10,7 @@ def main():
 
     X, y = make_classification(n_samples=500, n_features=10, n_informative=3, n_classes=4)
 
-    test_mlp = MLP([5, 3, 4, 2], loss_function=mse, activation=relu)
+    test_mlp = MLP([5, 3, 4, 2], loss_function=mse, activation=relu, output_activation=softmax)
 
     test_mlp.fit(X, y)
 

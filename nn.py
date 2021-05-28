@@ -14,7 +14,7 @@ class MLP:
         https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/
     """
 
-    def __init__(self, layer_sizes, loss_function, activation, tol=0.001, epochs=100):
+    def __init__(self, layer_sizes, loss_function, activation, output_activation, tol=0.001, epochs=100):
 
         # Initialisation of a simple neural network.
         if type(layer_sizes) not in [tuple, list, np.ndarray]:
@@ -30,6 +30,7 @@ class MLP:
         self.num_hidden_layers = self.__get_number_of_hidden_layers()
         self.losses = list()
         self.activation = activation
+        self.output_activation = output_activation
 
     def fit(self, X, y):
         """
@@ -65,11 +66,10 @@ class MLP:
         # check if network is fitted or not. Raise error if not.
         self.__is_network_fitted()
 
-        outputs = np.array([])
+        outputs = np.empty((0, 4))
         for x_i in X:
-            pred = self.__feed_forward(x_i, self.activation)
-            pred_softmax = np.max(pred)
-            outputs = np.append(outputs, pred_softmax)
+            pred = self.output_activation(self.__feed_forward(x_i, self.activation))
+            outputs = np.vstack((outputs, pred))
 
         return outputs
 
